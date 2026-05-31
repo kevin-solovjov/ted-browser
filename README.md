@@ -38,8 +38,16 @@ For hosted searches, configure a repository variable named `TED_API_BASE` to the
 Examples:
 
 ```text
-https://api.ted.europa.eu/v3
 https://your-proxy.example.com/api/ted/v3
 ```
 
-If the TED API does not allow browser CORS requests from your Pages origin, use a small external proxy and set `TED_API_BASE` to that proxy.
+The TED API does not currently return the CORS headers needed for direct calls from GitHub Pages, so hosted searches need a small external proxy.
+This repo includes a Cloudflare Worker example at `proxy/cloudflare-worker.js`.
+
+After deploying a proxy, add this repository variable in GitHub:
+
+```text
+TED_API_BASE=https://your-proxy.example.com/api/ted/v3
+```
+
+Then rerun the Pages workflow or push a new commit.

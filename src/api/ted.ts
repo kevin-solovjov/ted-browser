@@ -3,6 +3,9 @@
 // No API key required for the Search API.
 
 const TED_API_BASE = import.meta.env.VITE_TED_API_BASE || '/api/ted/v3';
+const GITHUB_PAGES_API_ERROR =
+  'Hosted GitHub Pages builds cannot use the local /api/ted proxy. ' +
+  'Set the GitHub repository variable TED_API_BASE to a deployed proxy URL ending in /v3, then rerun the Pages deployment.';
 
 export interface TedSearchParams {
   cpvCodes: string[];
@@ -208,6 +211,10 @@ function parseNotice(raw: Record<string, unknown>): TedNotice {
 }
 
 export async function searchTedNotices(params: TedSearchParams): Promise<TedSearchResult> {
+  if (window.location.hostname.endsWith('github.io') && TED_API_BASE.startsWith('/')) {
+    throw new Error(GITHUB_PAGES_API_ERROR);
+  }
+
   const query = buildQuery(params);
   const page = params.page ?? 1;
   const limit = Math.min(params.pageSize ?? 20, 250);
